@@ -11,8 +11,12 @@ let deltaTime;
 let gameObjects = [];
 let score = 0;
 let gameOver = false;
+let backgroundX = 0; // horizontal position of the background
 
 function init() {
+    background = new Image();
+    background.src = '../images/sky.jpeg'; // replace with your image path
+
     let player = new Player();
     gameObjects.push(player);
     lastTime = Date.now();
@@ -34,10 +38,22 @@ function update() {
     gameObjects.forEach(object => {
         object.update();
     });
+
+    let player = gameObjects[0];
+
+    // calculate player's velocity based on direction and speed
+    let playerVelocityX = player.directionX * player.speed;
+
+    // adjust background position based on player's velocity
+    backgroundX -= playerVelocityX * 0.02;
 }
 
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // draw the background at its new position
+    ctx.drawImage(background, backgroundX, 0, canvas.width, canvas.height);
+
     gameObjects.forEach(object => {
         object.render();
     });
@@ -68,7 +84,9 @@ class Player {
         this.directionY = 0;
 
         // event listeners
+        let directionTimeout;
         window.addEventListener('keydown', (event) => {
+            clearTimeout(directionTimeout); // clear previous timeout
             switch (event.key) {
                 case 'ArrowUp':
                     this.directionY = -1;
@@ -83,6 +101,14 @@ class Player {
                     this.image.src = this.images.right;
                     break;
             }
+        });
+
+        window.addEventListener('keyup', (event) => {
+            directionTimeout = setTimeout(() => {
+                this.directionX = 0;
+                this.directionY = 0;
+                this.image.src = this.images.up;
+            }, 100); // 0.05 seconds
         });
 
         window.addEventListener('keyup', (event) => {

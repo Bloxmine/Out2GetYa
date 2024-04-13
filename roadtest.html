@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            perspective: 1000px;
+            overflow: hidden;
+            height: 100vh;
+            background: #5C94FC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .road {
+            width: 200px;
+            height: 100vh;
+            background: linear-gradient(to bottom, #6B6B6B 0%, #333 70%);
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(75deg);
+        }
+
+        .line {
+            position: absolute;
+            width: 10px;
+            height: 50px;
+            background: white;
+            left: calc(50% - 5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="road" id="road"></div>
+
+    <script>
+        const road = document.getElementById('road');
+
+        for (let i = 0; i < 20; i++) {
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.style.top = `${i * 100}px`;
+            road.appendChild(line);
+        }
+
+        setInterval(() => {
+            const lines = document.getElementsByClassName('line');
+            for (let line of lines) {
+                let top = parseInt(line.style.top.replace('px', ''));
+                top += 10;
+                if (top > window.innerHeight) {
+                    top = -100;
+                }
+                line.style.top = `${top}px`;
+            }
+        }, 100);
+
+        let rotation = 0;
+
+        document.addEventListener('keydown', (event) => {
+            const key = event.key; // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
+
+            switch (key) {
+                case 'ArrowLeft':
+                    rotation -= 2;
+                    break;
+                case 'ArrowRight':
+                    rotation += 2;
+                    break;
+            }
+
+            road.style.transform = `rotateX(75deg) rotateZ(${rotation}deg)`;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background: #5C94FC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const road = {
+            lines: Array.from({ length: 20 }, (_, i) => i * 30),
+            rotation: 0
+        };
+
+        function drawRoad() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#6B6B6B';
+            ctx.fillRect(300, 0, 200, canvas.height);
+
+            ctx.fillStyle = 'white';
+            road.lines.forEach((y, i) => {
+                ctx.fillRect(400 - 5, y - i * 10, 10, 20);
+            });
+        }
+
+        function updateRoad() {
+            road.lines = road.lines.map(y => (y + 2) % canvas.height);
+            drawRoad();
+            requestAnimationFrame(updateRoad);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            const key = event.key; // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
+
+            switch (key) {
+                case 'ArrowLeft':
+                    road.rotation -= 2;
+                    break;
+                case 'ArrowRight':
+                    road.rotation += 2;
+                    break;
+            }
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.rotate(road.rotation * Math.PI / 180);
+        });
+
+        updateRoad();
+    </script>
+</body>
+</html>
